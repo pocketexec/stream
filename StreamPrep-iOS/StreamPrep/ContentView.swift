@@ -14,10 +14,15 @@ struct ContentView: View {
 struct LiveView: View {
     @EnvironmentObject var session: SessionStore
     @State private var selectedEntrance: PrepItem?
-    @State private var selectedTopic: PrepItem?
     @State private var selectedGame: PrepItem?
     @State private var selectedExit: PrepItem?
     @State private var showingReset = false
+    @State private var selectedTopicGroup = "Bell / Stream Lore"
+    @State private var topicPicks: [PrepItem] = []
+
+    private var topicGroups: [String] {
+        Array(Set(ContentData.topics.map { $0.group })).sorted()
+    }
 
     var body: some View {
         NavigationStack {
@@ -25,7 +30,7 @@ struct LiveView: View {
                 VStack(spacing: 14) {
                     header
                     liveCard(title:"ENTRANCE", icon:"door.left.hand.open", item:$selectedEntrance, source:ContentData.entrances)
-                    liveCard(title:"TOPIC", icon:"quote.bubble", item:$selectedTopic, source:ContentData.topics)
+                    topicQuickPicker
                     liveCard(title:"GAME", icon:"gamecontroller", item:$selectedGame, source:ContentData.games)
                     liveCard(title:"EXIT", icon:"figure.walk.departure", item:$selectedExit, source:ContentData.exits)
                     rhythm
@@ -40,7 +45,13 @@ struct LiveView: View {
                 }
             }
             .confirmationDialog("Reset all used items for a new stream?", isPresented:$showingReset) {
-                Button("Reset Session", role:.destructive) { session.resetSession() }
+                Button("Reset Session", role:.destructive) {
+                    session.resetSession()
+                    randomizeTopics()
+                }
+            }
+            .onAppear {
+                if topicPicks.isEmpty { randomizeTopics() }
             }
         }
     }
@@ -57,6 +68,81 @@ struct LiveView: View {
                 .background(.thinMaterial, in: Capsule())
         }
         .padding(.bottom,4)
+    }
+
+    private var topicQuickPicker: some View {
+        VStack(alignment:.leading, spacing:12) {
+            HStack {
+                Label("QUESTIONS", systemImage:"quote.bubble").font(.caption.bold()).foregroundStyle(.secondary)
+                Spacer()
+                Button {
+                    randomizeTopics()
+                } label: {
+                    Label("Randomize", systemImage:"shuffle")
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Menu {
+                ForEach(topicGroups, id:\.self) { group in
+                    Button(group) {
+                        selectedTopicGroup = group
+                        randomizeTopics()
+                    }
+                }
+            } label: {
+                HStack {
+                    VStack(alignment:.leading, spacing:2) {
+                        Text("CATEGORY").font(.caption2.bold()).foregroundStyle(.secondary)
+                        Text(selectedTopicGroup).font(.headline).foregroundStyle(.primary)
+                    }
+                    Spacer()
+                    Image(systemName:"chevron.up.chevron.down").foregroundStyle(.secondary)
+                }
+                .padding(12)
+                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius:12, style:.continuous))
+            }
+
+            if topicPicks.isEmpty {
+                Text("No unused questions left in this category.")
+                    .font(.callout).foregroundStyle(.secondary)
+                    .frame(maxWidth:.infinity, alignment:.leading)
+                    .padding(.vertical,8)
+            } else {
+                VStack(spacing:8) {
+                    ForEach(topicPicks) { question in
+                        HStack(alignment:.top, spacing:10) {
+                            Button {
+                                session.toggleUsed(question.id)
+                            } label: {
+                                Image(systemName: session.usedIDs.contains(question.id) ? "checkmark.circle.fill" : "circle")
+                                    .font(.title3)
+                                    .foregroundStyle(session.usedIDs.contains(question.id) ? .green : .secondary)
+                            }
+                            .buttonStyle(.plain)
+
+                            Text(question.summary)
+                                .font(.callout)
+                                .foregroundStyle(session.usedIDs.contains(question.id) ? .secondary : .primary)
+                                .strikethrough(session.usedIDs.contains(question.id))
+                                .fixedSize(horizontal:false, vertical:true)
+                                .frame(maxWidth:.infinity, alignment:.leading)
+                        }
+                        .padding(10)
+                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius:12, style:.continuous))
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(.background, in: RoundedRectangle(cornerRadius:18, style:.continuous))
+    }
+
+    private func randomizeTopics() {
+        let available = ContentData.topics.filter {
+            $0.group == selectedTopicGroup && !session.usedIDs.contains($0.id)
+        }
+        topicPicks = Array(available.shuffled().prefix(5))
     }
 
     @ViewBuilder
@@ -125,7 +211,7 @@ struct LibraryView: View {
                 NavigationLink { ItemListView(title:"Chat Games", items:ContentData.games) } label: { LibraryRow(icon:"gamecontroller", title:"Chat Games", count:ContentData.games.count) }
                 NavigationLink { ItemListView(title:"Exits", items:ContentData.exits) } label: { LibraryRow(icon:"figure.walk.departure", title:"Exits", count:ContentData.exits.count) }
                 Section {
-                    HStack { Spacer(); Text("Stream Prep 1.1 • Build 2").font(.caption).foregroundStyle(.secondary); Spacer() }
+                    HStack { Spacer(); Text("Stream Prep 1.1 • Build 4").font(.caption).foregroundStyle(.secondary); Spacer() }
                 }
             }
             .navigationTitle("Library")
