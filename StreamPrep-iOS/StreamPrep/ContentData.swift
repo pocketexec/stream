@@ -63,7 +63,8 @@ enum ContentData {
 
     private static func makeExits() -> [PrepItem] {
         return [
-            PrepItem(id:"exit-2",title:"Sincere → Immediate Takeback",summary:"Good time → never again",details:"IDEA
+            PrepItem(id:"exit-2",title:"Sincere → Immediate Takeback",summary:"Good time → never again",details:"""
+IDEA
 Have a genuinely warm goodbye, then immediately undercut it.
 
 EXAMPLE DELIVERY
@@ -71,8 +72,10 @@ EXAMPLE DELIVERY
 
 Start leaving.
 
-“Obviously, I won’t be making that mistake again.”",group:"Exit",badge:nil),
-            PrepItem(id:"exit-3",title:"Simple Warm Ending",summary:"Love chat → reluctant Bell affection",details:"IDEA
+“Obviously, I won’t be making that mistake again.”
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-3",title:"Simple Warm Ending",summary:"Love chat → reluctant Bell affection",details:"""
+IDEA
 Say a warm goodbye to chat, then include Bell almost reluctantly.
 
 EXAMPLE DELIVERY
@@ -82,8 +85,10 @@ Look at Bell. Pause.
 
 “…You too, I guess.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-4",title:"Actually Follow Through",summary:"Say something nice → mean it",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-4",title:"Actually Follow Through",summary:"Say something nice → mean it",details:"""
+IDEA
 Set up a reluctant compliment, then actually give Bell a sincere one.
 
 EXAMPLE DELIVERY
@@ -93,8 +98,10 @@ Pause.
 
 “You make this really fun.”
 
-Leave before she can make it weird.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-5",title:"Sincere → Protect the Reputation",summary:"Enjoyed tonight → don’t clip it",details:"IDEA
+Leave before she can make it weird.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-5",title:"Sincere → Protect the Reputation",summary:"Enjoyed tonight → don’t clip it",details:"""
+IDEA
 Admit you genuinely enjoyed yourself, then immediately protect your reputation.
 
 EXAMPLE DELIVERY
@@ -104,8 +111,10 @@ Look at chat.
 
 “Nobody fucking clip that.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-6",title:"Unexpectedly Sweet",summary:"Thanks → playful Bell tease",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-6",title:"Unexpectedly Sweet",summary:"Thanks → playful Bell tease",details:"""
+IDEA
 Thank everyone sincerely, then give Bell a light tease on the way out.
 
 EXAMPLE DELIVERY
@@ -115,8 +124,10 @@ Look at Bell.
 
 “And you weren’t completely unbearable tonight.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-8",title:"Give Bell Credit",summary:"Compliment Bell → surprised by it",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-8",title:"Give Bell Credit",summary:"Compliment Bell → surprised by it",details:"""
+IDEA
 Give Bell real credit, then undercut your own willingness to admit it.
 
 EXAMPLE DELIVERY
@@ -126,8 +137,10 @@ Pause.
 
 “I’m as surprised as you are.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-10",title:"Reluctant Compliment",summary:"Promise something nice → abort",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-10",title:"Reluctant Compliment",summary:"Promise something nice → abort",details:"""
+IDEA
 Announce that you should say something nice, then fail to produce the compliment.
 
 EXAMPLE DELIVERY
@@ -137,8 +150,10 @@ Long pause. Look at Bell. Look at chat.
 
 “Thanks everybody. Goodnight.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-12",title:"Compliment Through Chat",summary:"Return Bell to chat → supervision",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-12",title:"Compliment Through Chat",summary:"Return Bell to chat → supervision",details:"""
+IDEA
 Put chat back in charge of Bell and frame it like a responsibility.
 
 EXAMPLE DELIVERY
@@ -148,8 +163,10 @@ Look at Bell.
 
 “She requires constant supervision.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-15",title:"Overstate the Relationship",summary:"One of the evenings we’ve ever spent",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-15",title:"Overstate the Relationship",summary:"One of the evenings we’ve ever spent",details:"""
+IDEA
 Give a grand relationship-closing sentence that technically says almost nothing.
 
 EXAMPLE DELIVERY
@@ -159,8 +176,10 @@ Offer handshake.
 
 “This has been one of the evenings we’ve ever spent together.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-16",title:"Reverse Stonewall",summary:"Tiny goodbye → treat it like betrayal",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-16",title:"Reverse Stonewall",summary:"Tiny goodbye → treat it like betrayal",details:"""
+IDEA
 If Bell gives you a flat goodbye, react as if she dismissed an entire shared history.
 
 EXAMPLE DELIVERY
@@ -176,8 +195,10 @@ Pause.
 
 Look at chat. “Incredible.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-17",title:"The Concerned Friend",summary:"Offer help → reveal exact effort limit",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-17",title:"The Concerned Friend",summary:"Offer help → reveal exact effort limit",details:"""
+IDEA
 Offer one last act of concern, then reveal how little effort you were actually willing to spend.
 
 EXAMPLE DELIVERY
@@ -187,15 +208,19 @@ Bell: “No.”
 
 “Perfect. That’s exactly how much I was willing to do.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-21",title:"Give Chat the Last Word",summary:"Chat chooses final sentence",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-21",title:"Give Chat the Last Word",summary:"Chat chooses final sentence",details:"""
+IDEA
 Let chat write your final line, then commit to it completely.
 
 EXAMPLE DELIVERY
 “Chat, give me one sentence to say to Bell before I leave.”
 
-Read submissions. Pick one. Turn toward Bell. Say it completely seriously. Immediately leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-7",title:"Chat Appreciation",summary:"Appreciate chat → small Bell tease",details:"IDEA
+Read submissions. Pick one. Turn toward Bell. Say it completely seriously. Immediately leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-7",title:"Chat Appreciation",summary:"Appreciate chat → small Bell tease",details:"""
+IDEA
 Thank chat genuinely for making the night fun, then give Bell a small playful acknowledgment.
 
 EXAMPLE DELIVERY
@@ -205,15 +230,19 @@ Look at Bell.
 
 “And thanks for providing the building.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-9",title:"Pure Sincerity",summary:"Genuine goodbye → no joke needed",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-9",title:"Pure Sincerity",summary:"Genuine goodbye → no joke needed",details:"""
+IDEA
 End sincerely. Do not protect the moment with a joke unless one naturally appears.
 
 EXAMPLE DELIVERY
 “Seriously, thanks for having me. I had a good time.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-13",title:"Review Bell",summary:"Rate Bell/night → defend the score",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-13",title:"Review Bell",summary:"Rate Bell/night → defend the score",details:"""
+IDEA
 Give Bell an arbitrary rating for the night and defend it if she challenges you.
 
 EXAMPLE DELIVERY
@@ -223,8 +252,10 @@ Think seriously.
 
 “Seven and a half.”
 
-If challenged: “That’s actually extremely high for you.”",group:"Exit",badge:nil),
-            PrepItem(id:"exit-14",title:"Leave Bell With a Mission",summary:"Mission: DO NOT RAGE QUIT",details:"IDEA
+If challenged: “That’s actually extremely high for you.”
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-14",title:"Leave Bell With a Mission",summary:"Mission: DO NOT RAGE QUIT",details:"""
+IDEA
 Give Bell one final responsibility before leaving: do not rage quit. Phrase it based on what happened that night.
 
 EXAMPLE DELIVERY
@@ -234,8 +265,10 @@ Pause.
 
 “Do not rage quit.”
 
-Leave.",group:"Exit",badge:nil),
-            PrepItem(id:"exit-18",title:"Performance Review — Bell",summary:"Chat reviews Bell → you give verdict",details:"IDEA
+Leave.
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-18",title:"Performance Review — Bell",summary:"Chat reviews Bell → you give verdict",details:"""
+IDEA
 Ask chat to evaluate Bell, read a few answers, then issue your own final ruling.
 
 EXAMPLE DELIVERY
@@ -243,8 +276,10 @@ EXAMPLE DELIVERY
 
 Read a few responses.
 
-“Alright. The panel has spoken. I’ll allow her to continue streaming.”",group:"Exit",badge:nil),
-            PrepItem(id:"exit-19",title:"Performance Review — Me",summary:"Chat reviews you → react to verdict",details:"IDEA
+“Alright. The panel has spoken. I’ll allow her to continue streaming.”
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-19",title:"Performance Review — Me",summary:"Chat reviews you → react to verdict",details:"""
+IDEA
 Ask chat how you did and let their answers create your final response.
 
 EXAMPLE DELIVERY
@@ -252,8 +287,10 @@ EXAMPLE DELIVERY
 
 If positive: “Finally, an unbiased panel of experts.”
 
-If negative: “This election was clearly compromised.”",group:"Exit",badge:nil),
-            PrepItem(id:"exit-20",title:"Pretend You’re Holding Back Emotion",summary:"Emotional goodbye → natural undercut",details:"IDEA
+If negative: “This election was clearly compromised.”
+""",group:"Exit",badge:nil),
+            PrepItem(id:"exit-20",title:"Pretend You’re Holding Back Emotion",summary:"Emotional goodbye → natural undercut",details:"""
+IDEA
 Treat leaving like an emotionally difficult goodbye. Let Bell’s response determine how you break the emotion.
 
 EXAMPLE DELIVERY
@@ -263,7 +300,8 @@ Look around dramatically.
 
 “I’m not good at goodbyes.”
 
-If Bell says something dismissive: “Please. You’re making this significantly easier.”",group:"Exit",badge:nil)
+If Bell says something dismissive: “Please. You’re making this significantly easier.”
+""",group:"Exit",badge:nil)
         ]
     }
 }
