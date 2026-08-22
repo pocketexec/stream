@@ -1,0 +1,25 @@
+name: StreamPrep
+options:
+  bundleIdPrefix: com.vosh
+  deploymentTarget:
+    iOS: '16.0'
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+targets:
+  StreamPrep:
+    type: application
+    platform: iOS
+    sources:
+      - StreamPrep
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vosh.streamprep
+        TARGETED_DEVICE_FAMILY: '1'
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Stream Prep
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        CODE_SIGN_STYLE: Automatic
+    scheme:
+      testTargets: []
