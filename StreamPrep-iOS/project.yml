@@ -20,6 +20,8 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Stream Prep
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        MARKETING_VERSION: 1.1
+        CURRENT_PROJECT_VERSION: 2
         CODE_SIGN_STYLE: Automatic
     scheme:
       testTargets: []

@@ -124,6 +124,9 @@ struct LibraryView: View {
                 NavigationLink { ItemListView(title:"Topics", items:ContentData.topics) } label: { LibraryRow(icon:"quote.bubble", title:"Topics", count:ContentData.topics.count) }
                 NavigationLink { ItemListView(title:"Chat Games", items:ContentData.games) } label: { LibraryRow(icon:"gamecontroller", title:"Chat Games", count:ContentData.games.count) }
                 NavigationLink { ItemListView(title:"Exits", items:ContentData.exits) } label: { LibraryRow(icon:"figure.walk.departure", title:"Exits", count:ContentData.exits.count) }
+                Section {
+                    HStack { Spacer(); Text("Stream Prep 1.1 • Build 2").font(.caption).foregroundStyle(.secondary); Spacer() }
+                }
             }
             .navigationTitle("Library")
         }
@@ -152,7 +155,7 @@ struct ItemListView: View {
     }
 
     var groups:[String] { Array(Set(filtered.map{$0.group})).sorted { a,b in
-        let order = ["Top 5","LONG / PREPARED","SHORT / IMPROVISE"]
+        let order = ["Top 5","Exit"]
         let ia = order.firstIndex(of:a) ?? 99, ib = order.firstIndex(of:b) ?? 99
         return ia == ib ? a < b : ia < ib
     }}
@@ -200,6 +203,9 @@ struct ItemDetailView: View {
                 Text(item.title).font(.largeTitle.bold())
                 Text(item.summary).font(.title3).foregroundStyle(.secondary)
                 Divider()
+                if item.id.hasPrefix("exit-") {
+                    Text("IDEA + EXAMPLE").font(.caption.bold()).foregroundStyle(.secondary)
+                }
                 Text(item.details).font(.body).textSelection(.enabled)
                 Button(session.usedIDs.contains(item.id) ? "Undo Used" : "Mark Used") { session.toggleUsed(item.id) }
                     .buttonStyle(.borderedProminent).controlSize(.large)

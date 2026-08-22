@@ -63,25 +63,207 @@ enum ContentData {
 
     private static func makeExits() -> [PrepItem] {
         return [
-            PrepItem(id:"exit-2",title:"Sincere → Immediate Takeback",summary:"Good time → never again",details:"“Alright, I had a really good time with you tonight.”\n\nStart leaving.\n\n“Obviously, I won’t be making that mistake again.”",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-3",title:"Simple Warm Ending",summary:"Love chat → ‘you too, I guess’",details:"“Alright, I’m out. Love you guys.”\n\nLook at Bell. Pause.\n\n“…You too, I guess.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-4",title:"Actually Follow Through",summary:"Say something nice → ‘you make this really fun’",details:"“Before I leave, I feel like I should say something nice about Bell.”\n\nPause.\n\n“You make this really fun.”\n\nLeave before she can make it weird.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-5",title:"Sincere → Protect the Reputation",summary:"Enjoyed tonight → don’t clip it",details:"“I actually really enjoyed tonight.”\n\nLook at chat.\n\n“Nobody fucking clip that.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-6",title:"Unexpectedly Sweet",summary:"Thanks → not completely unbearable",details:"“Alright, I’m heading out. Thanks for letting me hang out with you guys.”\n\nLook at Bell.\n\n“And you weren’t completely unbearable tonight.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-8",title:"Give Bell Credit",summary:"Bell was funny → surprised",details:"“You were actually really funny tonight.”\n\nPause.\n\n“I’m as surprised as you are.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-10",title:"Reluctant Compliment",summary:"Something nice → ‘Thanks everybody’",details:"“Before I leave, I feel like I should say something nice about Bell.”\n\nLong pause. Look at Bell. Look at chat.\n\n“Thanks everybody. Goodnight.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-12",title:"Compliment Through Chat",summary:"Chat take care of her → supervision",details:"“Chat, take care of her for me.”\n\nLook at Bell.\n\n“She requires constant supervision.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-15",title:"Overstate the Relationship",summary:"‘One of the evenings we’ve ever spent’",details:"“Alright, Bell.”\n\nOffer handshake.\n\n“This has been one of the evenings we’ve ever spent together.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-16",title:"Reverse Stonewall",summary:"‘Bye?’ → after everything?",details:"Bell: “Bye.”\n\nStop at the doorway. Look back at her.\n\n“After everything we’ve been through tonight…”\n\nPause.\n\n“‘Bye.’”\n\nLook at chat. “Incredible.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-17",title:"The Concerned Friend",summary:"Need anything? → exactly how much effort",details:"“Do you need anything before I leave?”\n\nBell: “No.”\n\n“Perfect. That’s exactly how much I was willing to do.”\n\nLeave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-21",title:"Give Chat the Last Word",summary:"Chat chooses final sentence",details:"“Chat, give me one sentence to say to Bell before I leave.”\n\nRead submissions. Pick one. Turn toward Bell. Say it completely seriously. Immediately leave.",group:"LONG / PREPARED",badge:"LONG"),
-            PrepItem(id:"exit-7",title:"Chat Appreciation",summary:"Appreciate chat",details:"Sentiment: Thank chat genuinely for being fun / letting you hang out. Give Bell a small playful acknowledgment on the way out.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-9",title:"Pure Sincerity",summary:"Genuine goodbye",details:"Sentiment: Genuinely thank Bell for having you and say you had a good time. No joke required.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-13",title:"Review Bell",summary:"Rate Bell/night",details:"Sentiment: Give Bell a completely arbitrary performance rating for the night and defend the score if challenged.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-14",title:"Leave Bell With a Mission",summary:"Mission: DO NOT RAGE QUIT",details:"Sentiment: Before leaving, give Bell one responsibility: DO NOT RAGE QUIT. Let what happened during the stream determine how you phrase it.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-18",title:"Performance Review — Bell",summary:"Chat reviews Bell",details:"Sentiment: Ask chat to evaluate Bell’s performance tonight. Read their responses and give your own final verdict.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-19",title:"Performance Review — Me",summary:"Chat reviews me",details:"Sentiment: Ask chat how you did tonight. React naturally to whatever rating/comments they give you.",group:"SHORT / IMPROVISE",badge:"SHORT"),
-            PrepItem(id:"exit-20",title:"Pretend You’re Holding Back Emotion",summary:"Emotional goodbye → improvise undercut",details:"Sentiment: Treat leaving like an emotionally difficult goodbye. Let whatever Bell says determine how you undercut the emotion.",group:"SHORT / IMPROVISE",badge:"SHORT")
+            PrepItem(id:"exit-2",title:"Sincere → Immediate Takeback",summary:"Good time → never again",details:"IDEA
+Have a genuinely warm goodbye, then immediately undercut it.
+
+EXAMPLE DELIVERY
+“Alright, I had a really good time with you tonight.”
+
+Start leaving.
+
+“Obviously, I won’t be making that mistake again.”",group:"Exit",badge:nil),
+            PrepItem(id:"exit-3",title:"Simple Warm Ending",summary:"Love chat → reluctant Bell affection",details:"IDEA
+Say a warm goodbye to chat, then include Bell almost reluctantly.
+
+EXAMPLE DELIVERY
+“Alright, I’m out. Love you guys.”
+
+Look at Bell. Pause.
+
+“…You too, I guess.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-4",title:"Actually Follow Through",summary:"Say something nice → mean it",details:"IDEA
+Set up a reluctant compliment, then actually give Bell a sincere one.
+
+EXAMPLE DELIVERY
+“Before I leave, I feel like I should say something nice about Bell.”
+
+Pause.
+
+“You make this really fun.”
+
+Leave before she can make it weird.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-5",title:"Sincere → Protect the Reputation",summary:"Enjoyed tonight → don’t clip it",details:"IDEA
+Admit you genuinely enjoyed yourself, then immediately protect your reputation.
+
+EXAMPLE DELIVERY
+“I actually really enjoyed tonight.”
+
+Look at chat.
+
+“Nobody fucking clip that.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-6",title:"Unexpectedly Sweet",summary:"Thanks → playful Bell tease",details:"IDEA
+Thank everyone sincerely, then give Bell a light tease on the way out.
+
+EXAMPLE DELIVERY
+“Alright, I’m heading out. Thanks for letting me hang out with you guys.”
+
+Look at Bell.
+
+“And you weren’t completely unbearable tonight.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-8",title:"Give Bell Credit",summary:"Compliment Bell → surprised by it",details:"IDEA
+Give Bell real credit, then undercut your own willingness to admit it.
+
+EXAMPLE DELIVERY
+“You were actually really funny tonight.”
+
+Pause.
+
+“I’m as surprised as you are.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-10",title:"Reluctant Compliment",summary:"Promise something nice → abort",details:"IDEA
+Announce that you should say something nice, then fail to produce the compliment.
+
+EXAMPLE DELIVERY
+“Before I leave, I feel like I should say something nice about Bell.”
+
+Long pause. Look at Bell. Look at chat.
+
+“Thanks everybody. Goodnight.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-12",title:"Compliment Through Chat",summary:"Return Bell to chat → supervision",details:"IDEA
+Put chat back in charge of Bell and frame it like a responsibility.
+
+EXAMPLE DELIVERY
+“Chat, take care of her for me.”
+
+Look at Bell.
+
+“She requires constant supervision.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-15",title:"Overstate the Relationship",summary:"One of the evenings we’ve ever spent",details:"IDEA
+Give a grand relationship-closing sentence that technically says almost nothing.
+
+EXAMPLE DELIVERY
+“Alright, Bell.”
+
+Offer handshake.
+
+“This has been one of the evenings we’ve ever spent together.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-16",title:"Reverse Stonewall",summary:"Tiny goodbye → treat it like betrayal",details:"IDEA
+If Bell gives you a flat goodbye, react as if she dismissed an entire shared history.
+
+EXAMPLE DELIVERY
+Bell: “Bye.”
+
+Stop at the doorway. Look back at her.
+
+“After everything we’ve been through tonight…”
+
+Pause.
+
+“‘Bye.’”
+
+Look at chat. “Incredible.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-17",title:"The Concerned Friend",summary:"Offer help → reveal exact effort limit",details:"IDEA
+Offer one last act of concern, then reveal how little effort you were actually willing to spend.
+
+EXAMPLE DELIVERY
+“Do you need anything before I leave?”
+
+Bell: “No.”
+
+“Perfect. That’s exactly how much I was willing to do.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-21",title:"Give Chat the Last Word",summary:"Chat chooses final sentence",details:"IDEA
+Let chat write your final line, then commit to it completely.
+
+EXAMPLE DELIVERY
+“Chat, give me one sentence to say to Bell before I leave.”
+
+Read submissions. Pick one. Turn toward Bell. Say it completely seriously. Immediately leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-7",title:"Chat Appreciation",summary:"Appreciate chat → small Bell tease",details:"IDEA
+Thank chat genuinely for making the night fun, then give Bell a small playful acknowledgment.
+
+EXAMPLE DELIVERY
+“Seriously, chat, you guys were fun tonight. Thanks for letting me invade your stream.”
+
+Look at Bell.
+
+“And thanks for providing the building.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-9",title:"Pure Sincerity",summary:"Genuine goodbye → no joke needed",details:"IDEA
+End sincerely. Do not protect the moment with a joke unless one naturally appears.
+
+EXAMPLE DELIVERY
+“Seriously, thanks for having me. I had a good time.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-13",title:"Review Bell",summary:"Rate Bell/night → defend the score",details:"IDEA
+Give Bell an arbitrary rating for the night and defend it if she challenges you.
+
+EXAMPLE DELIVERY
+“Overall performance tonight…”
+
+Think seriously.
+
+“Seven and a half.”
+
+If challenged: “That’s actually extremely high for you.”",group:"Exit",badge:nil),
+            PrepItem(id:"exit-14",title:"Leave Bell With a Mission",summary:"Mission: DO NOT RAGE QUIT",details:"IDEA
+Give Bell one final responsibility before leaving: do not rage quit. Phrase it based on what happened that night.
+
+EXAMPLE DELIVERY
+“Bell, I’m leaving you with one responsibility.”
+
+Pause.
+
+“Do not rage quit.”
+
+Leave.",group:"Exit",badge:nil),
+            PrepItem(id:"exit-18",title:"Performance Review — Bell",summary:"Chat reviews Bell → you give verdict",details:"IDEA
+Ask chat to evaluate Bell, read a few answers, then issue your own final ruling.
+
+EXAMPLE DELIVERY
+“Chat, before I leave, we need Bell’s final performance evaluation.”
+
+Read a few responses.
+
+“Alright. The panel has spoken. I’ll allow her to continue streaming.”",group:"Exit",badge:nil),
+            PrepItem(id:"exit-19",title:"Performance Review — Me",summary:"Chat reviews you → react to verdict",details:"IDEA
+Ask chat how you did and let their answers create your final response.
+
+EXAMPLE DELIVERY
+“Before I leave—chat, how did I do tonight?”
+
+If positive: “Finally, an unbiased panel of experts.”
+
+If negative: “This election was clearly compromised.”",group:"Exit",badge:nil),
+            PrepItem(id:"exit-20",title:"Pretend You’re Holding Back Emotion",summary:"Emotional goodbye → natural undercut",details:"IDEA
+Treat leaving like an emotionally difficult goodbye. Let Bell’s response determine how you break the emotion.
+
+EXAMPLE DELIVERY
+“Alright guys, I’m gonna go.”
+
+Look around dramatically.
+
+“I’m not good at goodbyes.”
+
+If Bell says something dismissive: “Please. You’re making this significantly easier.”",group:"Exit",badge:nil)
         ]
     }
 }
