@@ -82,7 +82,7 @@ struct LiveView: View {
             .onAppear {
                 if topicPicks.isEmpty { randomizeTopics() }
             }
-            .onChange(of: customContent.entries) { _, _ in
+            .onChange(of: customContent.entries) { _ in
                 if !topicGroups.contains(selectedTopicGroup), let first = topicGroups.first {
                     selectedTopicGroup = first
                 }
@@ -384,57 +384,86 @@ struct CustomItemsView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if customContent.entries.isEmpty {
-                    ContentUnavailableView(
-                        "No Custom Items Yet",
-                        systemImage: "plus.square",
-                        description: Text("Add your own entrances, topics, games, and exits. They will appear throughout Live Mode and the Library.")
-                    )
-                } else {
-                    List {
-                        ForEach(PrepSection.allCases) { section in
-                            let sectionEntries = customContent.entries.filter { $0.section == section }
-                            if !sectionEntries.isEmpty {
-                                Section(section.rawValue) {
-                                    ForEach(sectionEntries) { entry in
-                                        Button {
-                                            editingEntry = entry
-                                        } label: {
-                                            HStack(spacing:12) {
-                                                Image(systemName:section.icon).foregroundStyle(.secondary)
-                                                VStack(alignment:.leading, spacing:3) {
-                                                    Text(entry.item.title).font(.headline).foregroundStyle(.primary)
-                                                    Text(entry.item.summary).font(.caption).foregroundStyle(.secondary).lineLimit(2)
-                                                }
-                                                Spacer()
-                                                Image(systemName:"chevron.right").font(.caption).foregroundStyle(.tertiary)
-                                            }
-                                        }
-                                        .swipeActions {
-                                            Button(role:.destructive) { customContent.delete(entry.id) } label: { Label("Delete", systemImage:"trash") }
-                                            Button { editingEntry = entry } label: { Label("Edit", systemImage:"pencil") }.tint(.blue)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            content
+                .navigationTitle("My Stuff")
+                .toolbar {
+                    ToolbarItem(placement:.topBarTrailing) {
+                        Button { showingAdd = true } label: { Image(systemName:"plus") }
                     }
                 }
-            }
-            .navigationTitle("My Stuff")
-            .toolbar {
-                ToolbarItem(placement:.topBarTrailing) {
-                    Button { showingAdd = true } label: { Image(systemName:"plus") }
+                .sheet(isPresented:$showingAdd) {
+                    CustomItemEditor()
+                }
+                .sheet(item:$editingEntry) { entry in
+                    CustomItemEditor(entry: entry)
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if customContent.entries.isEmpty {
+            CustomItemsEmptyState()
+        } else {
+            List {
+                ForEach(PrepSection.allCases) { section in
+                    sectionView(for: section)
                 }
             }
-            .sheet(isPresented:$showingAdd) {
-                CustomItemEditor()
-            }
-            .sheet(item:$editingEntry) { entry in
-                CustomItemEditor(entry: entry)
+        }
+    }
+
+    @ViewBuilder
+    private func sectionView(for section: PrepSection) -> some View {
+        let sectionEntries = customContent.entries.filter { $0.section == section }
+        if !sectionEntries.isEmpty {
+            Section(section.rawValue) {
+                ForEach(sectionEntries) { entry in
+                    CustomEntryRow(entry: entry) { editingEntry = entry }
+                        .swipeActions {
+                            Button(role:.destructive) { customContent.delete(entry.id) } label: { Label("Delete", systemImage:"trash") }
+                            Button { editingEntry = entry } label: { Label("Edit", systemImage:"pencil") }.tint(.blue)
+                        }
+                }
             }
         }
+    }
+}
+
+private struct CustomEntryRow: View {
+    let entry: CustomPrepItem
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing:12) {
+                Image(systemName: entry.section.icon).foregroundStyle(.secondary)
+                VStack(alignment:.leading, spacing:3) {
+                    Text(entry.item.title).font(.headline).foregroundStyle(.primary)
+                    Text(entry.item.summary).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                }
+                Spacer()
+                Image(systemName:"chevron.right").font(.caption).foregroundStyle(.tertiary)
+            }
+        }
+    }
+}
+
+private struct CustomItemsEmptyState: View {
+    var body: some View {
+        VStack(spacing:14) {
+            Image(systemName:"plus.square")
+                .font(.system(size:52))
+                .foregroundStyle(.secondary)
+            Text("No Custom Items Yet")
+                .font(.title2.bold())
+            Text("Add your own entrances, topics, games, and exits. They will appear throughout Live Mode and the Library.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth:.infinity, maxHeight:.infinity)
+        .padding(40)
     }
 }
 
