@@ -279,6 +279,7 @@ struct ItemListView: View {
     let items:[PrepItem]
     @State private var search = ""
     @State private var editingEntry: CustomPrepItem?
+    @State private var showingAdd = false
 
     var filtered:[PrepItem] {
         if search.isEmpty { return items }
@@ -332,6 +333,15 @@ struct ItemListView: View {
         }
         .searchable(text:$search)
         .navigationTitle(title)
+        .toolbar {
+            ToolbarItem(placement:.topBarTrailing) {
+                Button { showingAdd = true } label: { Image(systemName:"plus") }
+                    .accessibilityLabel("Add to \(title)")
+            }
+        }
+        .sheet(isPresented:$showingAdd) {
+            CustomItemEditor(initialSection: section)
+        }
         .sheet(item:$editingEntry) { entry in
             CustomItemEditor(entry: entry)
         }
@@ -479,9 +489,9 @@ struct CustomItemEditor: View {
     @State private var group: String
     @State private var badge: String
 
-    init(entry: CustomPrepItem? = nil) {
+    init(entry: CustomPrepItem? = nil, initialSection: PrepSection? = nil) {
         self.entry = entry
-        _section = State(initialValue: entry?.section ?? .topic)
+        _section = State(initialValue: entry?.section ?? initialSection ?? .topic)
         _title = State(initialValue: entry?.item.title ?? "")
         _summary = State(initialValue: entry?.item.summary ?? "")
         _details = State(initialValue: entry?.item.details ?? "")
@@ -492,6 +502,11 @@ struct CustomItemEditor: View {
     private var canSave: Bool {
         !title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty &&
         !summary.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty
+    }
+
+    private var existingCategories: [String] {
+        let all = ContentData.items(for: section) + customContent.items(for: section)
+        return Array(Set(all.map { $0.group })).filter { !$0.isEmpty }.sorted()
     }
 
     var body: some View {
@@ -513,8 +528,9 @@ struct CustomItemEditor: View {
                         .lineLimit(5...12)
                 }
 
-                Section("Organization") {
-                    TextField("Group / category (optional)", text:$group)
+                categorySection
+
+                Section("Badge") {
                     TextField("Badge (optional)", text:$badge)
                 }
 
@@ -534,6 +550,29 @@ struct CustomItemEditor: View {
                     Button("Save") { save() }.disabled(!canSave)
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var categorySection: some View {
+        Section("Category") {
+            if !existingCategories.isEmpty {
+                Menu {
+                    ForEach(existingCategories, id:\.self) { cat in
+                        Button(cat) { group = cat }
+                    }
+                } label: {
+                    HStack {
+                        Text("Choose existing category")
+                        Spacer()
+                        Image(systemName:"chevron.up.chevron.down").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            TextField("Category name", text:$group)
+            Text("Pick an existing category or type a new one. Your item shows up under that category everywhere this type appears.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         }
     }
 

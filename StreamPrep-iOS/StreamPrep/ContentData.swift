@@ -38,6 +38,15 @@ enum ContentData {
     static let topics: [PrepItem] = makeTopics()
     static let exits: [PrepItem] = makeExits()
 
+    static func items(for section: PrepSection) -> [PrepItem] {
+        switch section {
+        case .entrance: return entrances
+        case .topic: return topics
+        case .game: return games
+        case .exit: return exits
+        }
+    }
+
     private static func t(_ id:String,_ title:String,_ q:String,_ group:String) -> PrepItem {
         PrepItem(id:id,title:title,summary:q,details:q,group:group,badge:nil)
     }
