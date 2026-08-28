@@ -44,10 +44,10 @@ struct LiveView: View {
     @State private var selectedTopicGroup = "Bell / Stream Lore"
     @State private var topicPicks: [PrepItem] = []
 
-    private var entrances: [PrepItem] { ContentData.entrances + customContent.items(for: .entrance) }
-    private var games: [PrepItem] { ContentData.games + customContent.items(for: .game) }
-    private var exits: [PrepItem] { ContentData.exits + customContent.items(for: .exit) }
-    private var topics: [PrepItem] { ContentData.topics + customContent.items(for: .topic) }
+    private var entrances: [PrepItem] { customContent.allItems(for: .entrance) }
+    private var games: [PrepItem] { customContent.allItems(for: .game) }
+    private var exits: [PrepItem] { customContent.allItems(for: .exit) }
+    private var topics: [PrepItem] { customContent.allItems(for: .topic) }
 
     private var topicGroups: [String] {
         Array(Set(topics.map { $0.group })).sorted()
@@ -83,12 +83,19 @@ struct LiveView: View {
                 if topicPicks.isEmpty { randomizeTopics() }
             }
             .onChange(of: customContent.entries) { _ in
-                if !topicGroups.contains(selectedTopicGroup), let first = topicGroups.first {
-                    selectedTopicGroup = first
-                }
-                randomizeTopics()
+                refreshTopics()
+            }
+            .onChange(of: customContent.overrides) { _ in
+                refreshTopics()
             }
         }
+    }
+
+    private func refreshTopics() {
+        if !topicGroups.contains(selectedTopicGroup), let first = topicGroups.first {
+            selectedTopicGroup = first
+        }
+        randomizeTopics()
     }
 
     private var header: some View {
@@ -190,7 +197,8 @@ struct LiveView: View {
                 Button("Pick") { item.wrappedValue = available.randomElement() }
                     .buttonStyle(.bordered)
             }
-            if let current = item.wrappedValue {
+            if let selected = item.wrappedValue {
+                let current = customContent.resolved(selected)
                 NavigationLink {
                     ItemDetailView(item: current)
                 } label: {
@@ -240,10 +248,10 @@ struct LiveView: View {
 struct LibraryView: View {
     @EnvironmentObject var customContent: CustomContentStore
 
-    private var entrances: [PrepItem] { ContentData.entrances + customContent.items(for: .entrance) }
-    private var topics: [PrepItem] { ContentData.topics + customContent.items(for: .topic) }
-    private var games: [PrepItem] { ContentData.games + customContent.items(for: .game) }
-    private var exits: [PrepItem] { ContentData.exits + customContent.items(for: .exit) }
+    private var entrances: [PrepItem] { customContent.allItems(for: .entrance) }
+    private var topics: [PrepItem] { customContent.allItems(for: .topic) }
+    private var games: [PrepItem] { customContent.allItems(for: .game) }
+    private var exits: [PrepItem] { customContent.allItems(for: .exit) }
 
     var body: some View {
         NavigationStack {
@@ -253,7 +261,7 @@ struct LibraryView: View {
                 NavigationLink { ItemListView(title:"Chat Games", section:.game, items:games) } label: { LibraryRow(icon:"gamecontroller", title:"Chat Games", count:games.count) }
                 NavigationLink { ItemListView(title:"Exits", section:.exit, items:exits) } label: { LibraryRow(icon:"figure.walk.departure", title:"Exits", count:exits.count) }
                 Section {
-                    HStack { Spacer(); Text("Stream Prep 1.2 • Custom Content").font(.caption).foregroundStyle(.secondary); Spacer() }
+                    HStack { Spacer(); Text("Stream Prep 1.3 • Edit Any Card").font(.caption).foregroundStyle(.secondary); Spacer() }
                 }
             }
             .navigationTitle("Library")
@@ -279,6 +287,7 @@ struct ItemListView: View {
     let items:[PrepItem]
     @State private var search = ""
     @State private var editingEntry: CustomPrepItem?
+    @State private var editingBuiltin: PrepItem?
     @State private var showingAdd = false
 
     var filtered:[PrepItem] {
@@ -305,6 +314,9 @@ struct ItemListView: View {
                                     if item.id.hasPrefix("custom-") {
                                         Image(systemName:"person.crop.circle.badge.plus").foregroundStyle(.secondary)
                                     }
+                                    if customContent.isOverridden(item.id) {
+                                        Image(systemName:"pencil.circle").foregroundStyle(.secondary)
+                                    }
                                     if let badge=item.badge { Badge(text:badge) }
                                 }
                                 Text(item.summary).font(.caption).foregroundStyle(.secondary).lineLimit(2)
@@ -323,6 +335,8 @@ struct ItemListView: View {
                                     .tint(.blue)
                                 Button(role:.destructive) { customContent.delete(entry.id) } label: { Label("Delete", systemImage:"trash") }
                             } else {
+                                Button { editingBuiltin = item } label: { Label("Edit", systemImage:"pencil") }
+                                    .tint(.blue)
                                 Button { customContent.duplicate(item, section: section) } label: { Label("Copy", systemImage:"doc.on.doc") }
                                     .tint(.indigo)
                             }
@@ -345,6 +359,9 @@ struct ItemListView: View {
         .sheet(item:$editingEntry) { entry in
             CustomItemEditor(entry: entry)
         }
+        .sheet(item:$editingBuiltin) { builtin in
+            CustomItemEditor(builtin: builtin, builtinSection: section)
+        }
     }
 }
 
@@ -354,27 +371,22 @@ struct ItemDetailView: View {
     let item:PrepItem
     var section: PrepSection? = nil
     @State private var editingEntry: CustomPrepItem?
+    @State private var editingBuiltin: PrepItem?
+
+    private var displayItem: PrepItem { customContent.resolved(item) }
+    private var builtinSection: PrepSection? { section ?? ContentData.section(ofItemID: item.id) }
 
     var body: some View {
         ScrollView {
             VStack(alignment:.leading, spacing:18) {
-                HStack {
-                    if let badge=item.badge { Badge(text:badge) }
-                    Spacer()
-                    if let entry = customContent.entry(for: item.id) {
-                        Button { editingEntry = entry } label: { Image(systemName:"pencil") }
-                    } else if let section {
-                        Button { customContent.duplicate(item, section: section) } label: { Image(systemName:"doc.on.doc") }
-                    }
-                    Button { session.toggleFavorite(item.id) } label: { Image(systemName:session.favoriteIDs.contains(item.id) ? "star.fill" : "star") }
-                }
-                Text(item.title).font(.largeTitle.bold())
-                Text(item.summary).font(.title3).foregroundStyle(.secondary)
+                headerRow
+                Text(displayItem.title).font(.largeTitle.bold())
+                Text(displayItem.summary).font(.title3).foregroundStyle(.secondary)
                 Divider()
-                if item.id.hasPrefix("exit-") {
+                if displayItem.id.hasPrefix("exit-") {
                     Text("IDEA + EXAMPLE").font(.caption.bold()).foregroundStyle(.secondary)
                 }
-                Text(item.details).font(.body).textSelection(.enabled)
+                Text(displayItem.details).font(.body).textSelection(.enabled)
                 Button(session.usedIDs.contains(item.id) ? "Undo Used" : "Mark Used") { session.toggleUsed(item.id) }
                     .buttonStyle(.borderedProminent).controlSize(.large)
                     .frame(maxWidth:.infinity)
@@ -383,6 +395,29 @@ struct ItemDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item:$editingEntry) { entry in
             CustomItemEditor(entry: entry)
+        }
+        .sheet(item:$editingBuiltin) { builtin in
+            if let builtinSection {
+                CustomItemEditor(builtin: builtin, builtinSection: builtinSection)
+            }
+        }
+    }
+
+    private var headerRow: some View {
+        HStack {
+            if let badge = displayItem.badge { Badge(text:badge) }
+            Spacer()
+            if let entry = customContent.entry(for: item.id) {
+                Button { editingEntry = entry } label: { Image(systemName:"pencil") }
+            } else {
+                if builtinSection != nil {
+                    Button { editingBuiltin = displayItem } label: { Image(systemName:"pencil") }
+                }
+                if let section {
+                    Button { customContent.duplicate(displayItem, section: section) } label: { Image(systemName:"doc.on.doc") }
+                }
+            }
+            Button { session.toggleFavorite(item.id) } label: { Image(systemName:session.favoriteIDs.contains(item.id) ? "star.fill" : "star") }
         }
     }
 }
@@ -482,6 +517,7 @@ struct CustomItemEditor: View {
     @Environment(\.dismiss) private var dismiss
 
     let entry: CustomPrepItem?
+    let builtin: PrepItem?
     @State private var section: PrepSection
     @State private var title: String
     @State private var summary: String
@@ -489,14 +525,15 @@ struct CustomItemEditor: View {
     @State private var group: String
     @State private var badge: String
 
-    init(entry: CustomPrepItem? = nil, initialSection: PrepSection? = nil) {
+    init(entry: CustomPrepItem? = nil, builtin: PrepItem? = nil, builtinSection: PrepSection? = nil, initialSection: PrepSection? = nil) {
         self.entry = entry
-        _section = State(initialValue: entry?.section ?? initialSection ?? .topic)
-        _title = State(initialValue: entry?.item.title ?? "")
-        _summary = State(initialValue: entry?.item.summary ?? "")
-        _details = State(initialValue: entry?.item.details ?? "")
-        _group = State(initialValue: entry?.item.group ?? "")
-        _badge = State(initialValue: entry?.item.badge ?? "")
+        self.builtin = builtin
+        _section = State(initialValue: entry?.section ?? builtinSection ?? initialSection ?? .topic)
+        _title = State(initialValue: entry?.item.title ?? builtin?.title ?? "")
+        _summary = State(initialValue: entry?.item.summary ?? builtin?.summary ?? "")
+        _details = State(initialValue: entry?.item.details ?? builtin?.details ?? "")
+        _group = State(initialValue: entry?.item.group ?? builtin?.group ?? "")
+        _badge = State(initialValue: entry?.item.badge ?? builtin?.badge ?? "")
     }
 
     private var canSave: Bool {
@@ -505,17 +542,24 @@ struct CustomItemEditor: View {
     }
 
     private var existingCategories: [String] {
-        let all = ContentData.items(for: section) + customContent.items(for: section)
-        return Array(Set(all.map { $0.group })).filter { !$0.isEmpty }.sorted()
+        Array(Set(customContent.allItems(for: section).map { $0.group })).filter { !$0.isEmpty }.sorted()
     }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Type") {
-                    Picker("Type", selection:$section) {
-                        ForEach(PrepSection.allCases) { type in
-                            Label(type.rawValue, systemImage:type.icon).tag(type)
+                    if builtin == nil {
+                        Picker("Type", selection:$section) {
+                            ForEach(PrepSection.allCases) { type in
+                                Label(type.rawValue, systemImage:type.icon).tag(type)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Label(section.rawValue, systemImage:section.icon)
+                            Spacer()
+                            Text("Built-in card").font(.caption).foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -534,13 +578,24 @@ struct CustomItemEditor: View {
                     TextField("Badge (optional)", text:$badge)
                 }
 
+                if let builtin, customContent.isOverridden(builtin.id) {
+                    Section {
+                        Button("Reset to Original", role:.destructive) {
+                            customContent.removeOverride(forBuiltin: builtin.id)
+                            dismiss()
+                        }
+                    }
+                }
+
                 Section {
-                    Text("Custom items are saved on this device and automatically join Live Mode, search, favorites, and used-item tracking.")
+                    Text(builtin == nil
+                         ? "Custom items are saved on this device and automatically join Live Mode, search, favorites, and used-item tracking."
+                         : "Your edits are saved on this device and replace the original card everywhere. Reset to Original brings the app's version back.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle(entry == nil ? "Add Your Own" : "Edit Item")
+            .navigationTitle(builtin != nil ? "Edit Card" : (entry == nil ? "Add Your Own" : "Edit Item"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement:.cancellationAction) {
@@ -578,7 +633,9 @@ struct CustomItemEditor: View {
 
     private func save() {
         let finalDetails = details.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty ? summary : details
-        if let entry {
+        if let builtin {
+            customContent.setOverride(forBuiltin: builtin.id, section:section, title:title, summary:summary, details:finalDetails, group:group, badge:badge)
+        } else if let entry {
             customContent.update(entry.id, section:section, title:title, summary:summary, details:finalDetails, group:group, badge:badge)
         } else {
             customContent.add(section:section, title:title, summary:summary, details:finalDetails, group:group, badge:badge)

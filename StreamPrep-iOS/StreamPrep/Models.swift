@@ -41,17 +41,37 @@ struct CustomPrepItem: Identifiable, Hashable, Codable {
 
 final class CustomContentStore: ObservableObject {
     @Published var entries: [CustomPrepItem] = [] { didSet { save() } }
+    @Published var overrides: [String: PrepItem] = [:] { didSet { save() } }
 
     private let storageKey = "StreamPrep.customItems.v1"
+    private let overridesKey = "StreamPrep.builtinOverrides.v1"
 
     init() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey),
-              let decoded = try? JSONDecoder().decode([CustomPrepItem].self, from: data) else { return }
-        entries = decoded
+        if let data = UserDefaults.standard.data(forKey: storageKey),
+           let decoded = try? JSONDecoder().decode([CustomPrepItem].self, from: data) {
+            entries = decoded
+        }
+        if let data = UserDefaults.standard.data(forKey: overridesKey),
+           let decoded = try? JSONDecoder().decode([String: PrepItem].self, from: data) {
+            overrides = decoded
+        }
     }
 
     func items(for section: PrepSection) -> [PrepItem] {
         entries.filter { $0.section == section }.map(\.item)
+    }
+
+    // Built-in items with any on-device edits applied, followed by the user's custom items.
+    func allItems(for section: PrepSection) -> [PrepItem] {
+        ContentData.items(for: section).map { overrides[$0.id] ?? $0 } + items(for: section)
+    }
+
+    func resolved(_ item: PrepItem) -> PrepItem {
+        overrides[item.id] ?? item
+    }
+
+    func isOverridden(_ itemID: String) -> Bool {
+        overrides[itemID] != nil
     }
 
     func entry(for itemID: String) -> CustomPrepItem? {
@@ -59,33 +79,39 @@ final class CustomContentStore: ObservableObject {
     }
 
     func add(section: PrepSection, title: String, summary: String, details: String, group: String, badge: String?) {
-        let cleanBadge = badge?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let item = PrepItem(
-            id: "custom-\(UUID().uuidString)",
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-            summary: summary.trimmingCharacters(in: .whitespacesAndNewlines),
-            details: details.trimmingCharacters(in: .whitespacesAndNewlines),
-            group: group.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? defaultGroup(for: section) : group.trimmingCharacters(in: .whitespacesAndNewlines),
-            badge: cleanBadge?.isEmpty == false ? cleanBadge : nil
-        )
+        let item = makeItem(id: "custom-\(UUID().uuidString)", title: title, summary: summary, details: details, group: group, badge: badge, fallbackGroup: defaultGroup(for: section))
         entries.append(CustomPrepItem(section: section, item: item))
     }
 
     func update(_ entryID: String, section: PrepSection, title: String, summary: String, details: String, group: String, badge: String?) {
         guard let index = entries.firstIndex(where: { $0.id == entryID }) else { return }
-        let cleanBadge = badge?.trimmingCharacters(in: .whitespacesAndNewlines)
         let existingID = entries[index].item.id
         entries[index] = CustomPrepItem(
             id: entryID,
             section: section,
-            item: PrepItem(
-                id: existingID,
-                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-                summary: summary.trimmingCharacters(in: .whitespacesAndNewlines),
-                details: details.trimmingCharacters(in: .whitespacesAndNewlines),
-                group: group.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? defaultGroup(for: section) : group.trimmingCharacters(in: .whitespacesAndNewlines),
-                badge: cleanBadge?.isEmpty == false ? cleanBadge : nil
-            )
+            item: makeItem(id: existingID, title: title, summary: summary, details: details, group: group, badge: badge, fallbackGroup: defaultGroup(for: section))
+        )
+    }
+
+    func setOverride(forBuiltin itemID: String, section: PrepSection, title: String, summary: String, details: String, group: String, badge: String?) {
+        let original = ContentData.items(for: section).first { $0.id == itemID }
+        overrides[itemID] = makeItem(id: itemID, title: title, summary: summary, details: details, group: group, badge: badge, fallbackGroup: original?.group ?? defaultGroup(for: section))
+    }
+
+    func removeOverride(forBuiltin itemID: String) {
+        overrides.removeValue(forKey: itemID)
+    }
+
+    private func makeItem(id: String, title: String, summary: String, details: String, group: String, badge: String?, fallbackGroup: String) -> PrepItem {
+        let cleanBadge = badge?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanGroup = group.trimmingCharacters(in: .whitespacesAndNewlines)
+        return PrepItem(
+            id: id,
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+            summary: summary.trimmingCharacters(in: .whitespacesAndNewlines),
+            details: details.trimmingCharacters(in: .whitespacesAndNewlines),
+            group: cleanGroup.isEmpty ? fallbackGroup : cleanGroup,
+            badge: cleanBadge?.isEmpty == false ? cleanBadge : nil
         )
     }
 
@@ -114,8 +140,12 @@ final class CustomContentStore: ObservableObject {
     }
 
     private func save() {
-        guard let data = try? JSONEncoder().encode(entries) else { return }
-        UserDefaults.standard.set(data, forKey: storageKey)
+        if let data = try? JSONEncoder().encode(entries) {
+            UserDefaults.standard.set(data, forKey: storageKey)
+        }
+        if let data = try? JSONEncoder().encode(overrides) {
+            UserDefaults.standard.set(data, forKey: overridesKey)
+        }
     }
 }
 

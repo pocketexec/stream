@@ -47,6 +47,12 @@ enum ContentData {
         }
     }
 
+    static func section(ofItemID id: String) -> PrepSection? {
+        PrepSection.allCases.first { section in
+            items(for: section).contains { $0.id == id }
+        }
+    }
+
     private static func t(_ id:String,_ title:String,_ q:String,_ group:String) -> PrepItem {
         PrepItem(id:id,title:title,summary:q,details:q,group:group,badge:nil)
     }
