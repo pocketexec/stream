@@ -39,6 +39,7 @@ struct LiveView: View {
     @EnvironmentObject var customContent: CustomContentStore
     @State private var selectedEntrance: PrepItem?
     @State private var selectedGame: PrepItem?
+    @State private var selectedMid: PrepItem?
     @State private var selectedExit: PrepItem?
     @State private var showingReset = false
     @State private var selectedTopicGroup = "Bell / Stream Lore"
@@ -46,6 +47,7 @@ struct LiveView: View {
 
     private var entrances: [PrepItem] { customContent.allItems(for: .entrance) }
     private var games: [PrepItem] { customContent.allItems(for: .game) }
+    private var mids: [PrepItem] { customContent.allItems(for: .mid) }
     private var exits: [PrepItem] { customContent.allItems(for: .exit) }
     private var topics: [PrepItem] { customContent.allItems(for: .topic) }
 
@@ -61,6 +63,7 @@ struct LiveView: View {
                     liveCard(title:"ENTRANCE", icon:"door.left.hand.open", item:$selectedEntrance, source:entrances)
                     topicQuickPicker
                     liveCard(title:"GAME", icon:"gamecontroller", item:$selectedGame, source:games)
+                    liveCard(title:"MID STREAM", icon:"theatermasks", item:$selectedMid, source:mids)
                     liveCard(title:"EXIT", icon:"figure.walk.departure", item:$selectedExit, source:exits)
                     rhythm
                 }
@@ -190,6 +193,7 @@ struct LiveView: View {
     @ViewBuilder
     private func liveCard(title:String, icon:String, item:Binding<PrepItem?>, source:[PrepItem]) -> some View {
         let available = source.filter { !session.usedIDs.contains($0.id) }
+        let emptyText = source.isEmpty ? "No cards yet — add your own with +" : "Everything used"
         VStack(alignment:.leading, spacing:10) {
             HStack {
                 Label(title, systemImage: icon).font(.caption.bold()).foregroundStyle(.secondary)
@@ -221,7 +225,7 @@ struct LiveView: View {
                 Button {
                     item.wrappedValue = available.randomElement()
                 } label: {
-                    HStack { Text(available.isEmpty ? "Everything used" : "Tap to pick from \(available.count) unused"); Spacer(); Image(systemName:"shuffle") }
+                    HStack { Text(available.isEmpty ? emptyText : "Tap to pick from \(available.count) unused"); Spacer(); Image(systemName:"shuffle") }
                         .frame(maxWidth:.infinity).padding(.vertical,8)
                 }
                 .buttonStyle(.bordered)
@@ -251,6 +255,7 @@ struct LibraryView: View {
     private var entrances: [PrepItem] { customContent.allItems(for: .entrance) }
     private var topics: [PrepItem] { customContent.allItems(for: .topic) }
     private var games: [PrepItem] { customContent.allItems(for: .game) }
+    private var mids: [PrepItem] { customContent.allItems(for: .mid) }
     private var exits: [PrepItem] { customContent.allItems(for: .exit) }
 
     var body: some View {
@@ -259,9 +264,10 @@ struct LibraryView: View {
                 NavigationLink { ItemListView(title:"Entrances", section:.entrance, items:entrances) } label: { LibraryRow(icon:"door.left.hand.open", title:"Entrances", count:entrances.count) }
                 NavigationLink { ItemListView(title:"Topics", section:.topic, items:topics) } label: { LibraryRow(icon:"quote.bubble", title:"Topics", count:topics.count) }
                 NavigationLink { ItemListView(title:"Chat Games", section:.game, items:games) } label: { LibraryRow(icon:"gamecontroller", title:"Chat Games", count:games.count) }
+                NavigationLink { ItemListView(title:"Mid Stream", section:.mid, items:mids) } label: { LibraryRow(icon:"theatermasks", title:"Mid Stream", count:mids.count) }
                 NavigationLink { ItemListView(title:"Exits", section:.exit, items:exits) } label: { LibraryRow(icon:"figure.walk.departure", title:"Exits", count:exits.count) }
                 Section {
-                    HStack { Spacer(); Text("Stream Prep 1.3 • Edit Any Card").font(.caption).foregroundStyle(.secondary); Spacer() }
+                    HStack { Spacer(); Text("Stream Prep 1.4 • Mid Stream").font(.caption).foregroundStyle(.secondary); Spacer() }
                 }
             }
             .navigationTitle("Library")

@@ -38,11 +38,16 @@ enum ContentData {
     static let topics: [PrepItem] = makeTopics()
     static let exits: [PrepItem] = makeExits()
 
+    // Mid Stream ships empty on purpose: it's the bucket for the user's own
+    // ideas that happen during the stream and fit none of the other types.
+    static let mids: [PrepItem] = []
+
     static func items(for section: PrepSection) -> [PrepItem] {
         switch section {
         case .entrance: return entrances
         case .topic: return topics
         case .game: return games
+        case .mid: return mids
         case .exit: return exits
         }
     }

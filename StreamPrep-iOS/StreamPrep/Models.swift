@@ -4,6 +4,7 @@ enum PrepSection: String, CaseIterable, Identifiable, Codable {
     case entrance = "Entrance"
     case topic = "Topic"
     case game = "Game"
+    case mid = "Mid Stream"
     case exit = "Exit"
 
     var id: String { rawValue }
@@ -13,6 +14,7 @@ enum PrepSection: String, CaseIterable, Identifiable, Codable {
         case .entrance: return "door.left.hand.open"
         case .topic: return "quote.bubble"
         case .game: return "gamecontroller"
+        case .mid: return "theatermasks"
         case .exit: return "figure.walk.departure"
         }
     }
@@ -135,6 +137,7 @@ final class CustomContentStore: ObservableObject {
         case .entrance: return "Entrance"
         case .topic: return "My Topics"
         case .game: return "My Games"
+        case .mid: return "Mid Stream"
         case .exit: return "Exit"
         }
     }
